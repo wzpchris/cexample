@@ -18,11 +18,14 @@ int main() {
 	copy(v.begin(), v.end(), ostream_iterator<int>(cout, " "));
 	cout << endl;	
 	stringstream sstr;
+	cout << "************Insert Node***************" << endl;
 	for(int i = 0; i < v.size(); ++i) {
 		tree.Insert(v[i], i);
 		cout << "insert:" << v[i] << endl;
+		tree.InOrderTraverse();
 	}
 
+	cout << "***********Delete Node****************" << endl;
 	for(int i = 0; i < v.size(); ++i) {
 		cout << "delete:" << v[i] << endl;
 		tree.Delete(v[i]);

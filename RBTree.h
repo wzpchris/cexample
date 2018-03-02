@@ -118,7 +118,7 @@ public:
 			}else {
 				insert_point->right = insert_node;
 			}
-			insert_node->parent = insert->point;
+			insert_node->parent = insert_point;
 		}
 		InsertFixUp(insert_node);
 	}
@@ -158,7 +158,7 @@ public:
 					if(node == node->parent->right) //且z时右孩子
 					{
 						node = node->parent;
-						RotateLefe(node);
+						RotateLeft(node);
 					}
 
 					//插入情况3:z的叔叔y时黑色的,但z是左孩子
@@ -416,6 +416,9 @@ public:
 	}
 	//debug
 	void InOrderTraverse() {
+		cout << "the tree root:" << endl;
+		cout << "key=" << m_root->key << "\tdata=" << m_root->data << "\tcolor=" << (m_root->RB_COLOR == RED ? "Red" : "Black") << endl; 
+		cout << "------------------------------------" << endl;
 		InOrderTraverse(m_root);
 	}
 	void CreateGraph(string filename) {
@@ -430,7 +433,7 @@ public:
 			return;
 		}else {
 			InOrderTraverse(node->left);
-			cout << node->key << endl;
+			cout << "key=" << node->key << "\tdata=" << node->data << "\tcolor=" << (node->RB_COLOR == RED ? "Red" : "Black") << endl;
 			InOrderTraverse(node->right);
 		}
 	}
