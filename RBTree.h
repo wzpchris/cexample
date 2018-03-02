@@ -309,6 +309,147 @@ public:
 	  color[x] <- BLACK 
 	*/		
 	void DeleteFixUp(RB_Node *node) {
-		while(node != m_root && node->RB
+		while(node != m_root && node->RB_COLOR == BLACK) {
+			if(node == node->parent->left) {
+				RB_Node *brother = node->parent->right;	
+				if(brother->RB_COLOR == RED) //情况1:x的兄弟w是红色的
+				{
+					brother->RB_COLOR = BLACK;
+					node->parent->RB_COLOR = RED;
+					RotateLeft(node->parent);
+				}else { //情况2:x的兄弟w是黑色的
+					if(brother->left->RB_COLOR == BLACK && brother->right->RB_COLOR == BLACK) {
+						//且w的两个孩子都是黑色的
+						brother->RB_COLOR = RED;
+						node = node->parent;
+					}else if(brother->right->RB_COLOR == BLACK) {
+						//情况3:x的兄弟w是黑色的,w的右孩子是黑色(w的左孩子是红色)
+						brother->RB_COLOR = RED;
+						brother->left->RB_COLOR = BLACK;
+						RotateRight(brother);
+					}
+
+					//情况4:x的兄弟w是黑色的,且w的右孩子是红色的
+					brother->RB_COLOR = node->parent->RB_COLOR;
+					node->parent->RB_COLOR = BLACK;
+					brother->right->RB_COLOR = BLACK;
+					RotateLeft(node->parent);
+					node = m_root;	
+				}	
+			}else { //下述情况针对上面情况1中,node作为右孩子而阐述的
+				RB_Node *brother = node->parent->left;	
+				if(brother->RB_COLOR == RED) {
+					brother->RB_COLOR = BLACK;
+					node->parent->RB_COLOR = RED;
+					RotateRight(node->parent);
+				}else {
+					if(brother->left->RB_COLOR == BLACK && brother->right->RB_COLOR == BLACK) {
+						brother->RB_COLOR = RED;
+						node = node->parent;
+					}else if(brother->left->RB_COLOR == BLACK) {
+						brother->RB_COLOR = RED;
+						brother->right->RB_COLOR = BLACK;
+						RotateLeft(brother);
+					}
+
+					brother->RB_COLOR = node->parent->RB_COLOR;
+					node->parent->RB_COLOR = BLACK;
+					brother->left->RB_COLOR = BLACK;
+					RotateRight(node->parent);
+					node = m_root;					
+				}
+			}
+		}
+		m_nullNode->parent = m_root; //最后将node置为根节点
+		node->RB_COLOR = BLACK;		//并改为黑色
 	}
+	//
+	inline RB_Node* InOrderPredecessor(RB_Node *node) {
+		if(node == m_nullNode) {
+			return m_nullNode;
+		}
+		RB_Node *result = node->left;
+		while(result != m_nullNode) {
+			if(result->right != m_nullNode) {
+				result = result->right;
+			}else {
+				break;
+			}
+		}
+
+		if(result == m_nullNode) {
+			RB_Node *index = node->parent;
+			result = node;
+			while(index != m_nullNode && result == index->left) {
+				result = index;
+				index = index->parent;
+			}	
+			result = index;
+		}
+		
+		return result;
+	}
+	//
+	inline RB_Node *InOrderSuccessor(RB_Node *node) {
+		if(node == m_nullNode) {
+			return m_nullNode;
+		}	
+		RB_Node *result = node->right;
+		while(result != m_nullNode) {
+			if(result->left != m_nullNode) {
+				result = result->left;
+			}else {
+				break;
+			}
+		}
+
+		if(result == m_nullNode) {
+			RB_Node *index = node->parent;
+			result = node;
+			while(index != m_nullNode && result == index->right) {
+				result = index;
+				index = index->parent;
+			}
+			result = index;
+		}
+		return result;
+	}
+	//debug
+	void InOrderTraverse() {
+		InOrderTraverse(m_root);
+	}
+	void CreateGraph(string filename) {
+
+	}
+	void InOrderCreate(ofstream& file, RB_Node *node) {
+	
+	}
+	
+	void InOrderTraverse(RB_Node *node) {
+		if(node == m_nullNode) {
+			return;
+		}else {
+			InOrderTraverse(node->left);
+			cout << node->key << endl;
+			InOrderTraverse(node->right);
+		}
+	}
+	~RB_Tree() {
+		clear(m_root);
+		delete m_nullNode;
+	}
+private:
+	void clear(RB_Node *node) {
+		if(node == m_nullNode) {
+			return;
+		}else {
+			clear(node->left);
+			clear(node->right);
+			delete node;
+		}
+	}
+private:
+	RB_Node *m_nullNode;
+	RB_Node *m_root;
 };
+#endif  /*_RB_TREE_H_*/
