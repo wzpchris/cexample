@@ -53,6 +53,40 @@ public:
 //整个占5字节,按min(sizeof(short), 4) = 2对齐,后面再补一字节,整个类的大小为6字节
 #pragma unpack()
 
+#pragma pack(4)
+/**
+ * 类中包含static变量时,类的大小
+ */
+class Point {
+public:
+    Point(float xval):_x(xval) {}
+    virtual ~Point() {}
+    float x() const;
+    static short PointCount();
+protected:
+    virtual ostream& print(ostream &os) const {}
+    float _x;
+    static short _point_count;
+};
+#pragma unpack()
+
+
+class TestVfunc{
+public:
+    TestVfunc() {}
+    virtual ~TestVfunc() {}
+};
+
+short Point::_point_count = 0;
+short Point::PointCount(){
+    return Point::_point_count;
+}
+
+struct s {
+    int a;
+    char ch[1];
+};
+
 int main(int argc, char **argv)
 {
 	cout << "sizeof enum = " << sizeof(e) << endl;
@@ -67,5 +101,21 @@ int main(int argc, char **argv)
 	cout << "&d.b = " << &d.b << endl;
 	cout << "&d.c = " << (void*)&(d.c) << endl;
 	cout << "&e = " << &e << endl;
+
+    cout << "============================" << endl;
+    cout << "size int = " << sizeof(int) << endl;
+    cout << "size float = " << sizeof(float) << endl;
+    cout << "size short = " << sizeof(short) << endl;
+    cout << "size Point = " << sizeof(Point) << endl;
+    Point p(0.1);
+    cout << "size Point instance = " << sizeof(p) << endl;
+    int *vpt = (int*)(&p);
+    cout << "virtual table = " << sizeof(vpt) << endl; //int*指针算8个字节
+
+    cout << "============================" << endl;
+    cout << "size vfunc = " << sizeof(TestVfunc) << endl;
+
+    cout << "============================" << endl;
+    cout << "size struct s = " << sizeof(struct s) << endl;
 	return 0;
 }
