@@ -9,6 +9,7 @@
 #include<iostream>
 #include<cstdio>
 #include <cstdlib>
+#include <stack>
 using namespace std;
 
 typedef struct _BitNode
@@ -114,6 +115,17 @@ bool deleteElement(BiTree &T, int key)
     return false;
 }
 
+//前序遍历
+void preOrderTraverse(BiTree T)
+{
+    if(T)
+    {
+        cout << T->data << " ";
+        preOrderTraverse(T->lchild);
+        preOrderTraverse(T->rchild);
+    }
+}
+
 //中序遍历并输出元素
 void inorderReverse(BiTree T)
 {
@@ -125,6 +137,94 @@ void inorderReverse(BiTree T)
     }
 }
 
+//后序遍历
+void postOrderTraverse(BiTree T)
+{
+    if(T)
+    {
+        postOrderTraverse(T->lchild);
+        postOrderTraverse(T->rchild);
+        cout << T->data << " ";
+    }
+}
+
+//非递归实现各种排序
+void preOrderTraverse2(BiTree T)
+{
+    if(NULL == T) return;
+    BiTree p = NULL;
+    stack<BiTree> s;
+    p = T;
+    while(p || !s.empty())
+    {
+        while(p)
+        {
+            cout << p->data << " "; 
+            s.push(p);
+            p = p->lchild; 
+        }
+
+        if(!s.empty())
+        {
+            p = s.top();
+            s.pop();
+            p = p->rchild;
+        }
+    }
+}
+
+void inOrderTraverse2(BiTree T)
+{
+    if(NULL == T) return;
+    stack<BiTree> s;
+    BiTree p = T;
+    while(p != NULL || !s.empty())
+    {
+        while(p != NULL)
+        {
+            s.push(p);
+            p = p->lchild;
+        }
+
+        if(!s.empty())
+        {
+            p = s.top();
+            cout << p->data << " ";
+            s.pop();
+            p = p->rchild;
+        }
+    }
+}
+
+void postOrderTraverse2(BiTree T)
+{
+    if(NULL == T) return;
+    BiTree pre = NULL, cur = NULL;
+    stack<BiTree> s;
+    s.push(T);
+    while(!s.empty())
+    {
+        cur = s.top();
+        if((cur->lchild == NULL && cur->rchild == NULL) ||
+          (pre != NULL && (pre == cur->lchild || pre == cur->rchild)))
+        {
+            cout << cur->data << " ";
+            s.pop();
+            pre = cur;
+        }else {
+            if(cur->rchild != NULL)
+            {
+                s.push(cur->rchild);
+            }
+
+            if(cur->lchild != NULL)
+            {
+                s.push(cur->lchild);
+            }
+        }
+    }
+}
+
 int main()
 {
     BiTree tree = NULL;
@@ -133,7 +233,29 @@ int main()
     {
         insertBST(tree, a[i]);
     }
-
+    cout << "树的递归遍历:" << endl;
+    cout << "前序:";
+    preOrderTraverse(tree);
+    cout << endl;
+    cout << "中序:";
+    inorderReverse(tree);
+    cout << endl;
+    cout << "后序:";
+    postOrderTraverse(tree);
+    cout << endl;
+    cout << "=====================" << endl;
+    cout << "树的非递归遍历:" << endl;
+    cout << "前序:";
+    preOrderTraverse2(tree);
+    cout << endl;
+    cout << "中序:";
+    inOrderTraverse2(tree);
+    cout << endl;
+    cout << "后序:";
+    postOrderTraverse2(tree);
+    cout << endl;
+    
+    cout << "=====================" << endl;
     inorderReverse(tree);
     cout << endl;
     cout << "Tree Root=" << tree->data << endl;
@@ -142,5 +264,6 @@ int main()
     inorderReverse(tree);
     cout << endl;
     cout << "Tree Root=" << tree->data << endl;
+
     return 0;
 }

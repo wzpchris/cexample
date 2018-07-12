@@ -123,7 +123,7 @@ void shellSort(SqList *L)
     do
     {
         increment = increment / 3 + 1;
-        for(i = increment; i <= L->length; ++i)
+        for(i = increment + 1; i <= L->length; ++i)
         {
             if(L->r[i] < L->r[i - increment])
             {
